@@ -48,7 +48,8 @@
             width:100%;
             max-width:1200px; /* limit how wide the video becomes on very large screens */
             margin:0 auto;     /* center the video */
-            background: #ff7a00;
+            background: #202020;
+            border: 3px solid var(--orange);
             border-radius:14px;
             overflow:hidden;
             box-shadow: 0 8px 24px rgba(17,17,17,0.08);
@@ -217,6 +218,25 @@
             </div>
         </section>
     </main>
+
+    <section aria-label="Additional videos">
+            <div class="video-grid">
+                <div class="video-box">
+                    <video controls playsinline preload="metadata" poster="assets/images/video2-poster.jpg">
+                        <source src="assets/videos/video2.webm" type="video/webm">
+                        <source src="assets/videos/video2.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="video-box">
+                    <video controls playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
+                        <source src="assets/videos/video.webm" type="video/webm">
+                        <source src="assets/videos/video.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </section>
 
     <script>
         // try to play programmatically for browsers that block autoplay unless muted
