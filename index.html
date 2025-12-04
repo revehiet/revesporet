@@ -21,7 +21,7 @@
         html,body{
             height:100%;
             margin:0;
-            background:#ffffff;
+            background:#202020;
             font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
             color:#111;
         }
@@ -46,7 +46,7 @@
 
         .video-wrap{
             width:100%;
-            background: #fff;
+            background: #ff7a00;
             border-radius:14px;
             overflow:hidden;
             box-shadow: 0 8px 24px rgba(17,17,17,0.08);
@@ -58,6 +58,26 @@
             height:auto;
             object-fit:cover;
             background:#000;
+        }
+
+		/* links under the video */
+        .video-links {
+            margin-top:12px;
+            display:flex;
+            gap:12px;
+            justify-content:center;
+            flex-wrap:wrap;
+        }
+        .video-links a {
+            color:var(--orange);
+            text-decoration:none;
+            font-weight:600;
+            background:transparent;
+            padding:6px 10px;
+            border-radius:6px;
+        }
+        .video-links a:hover {
+            text-decoration:underline;
         }
 
         /* small screens */
@@ -75,14 +95,33 @@
     <main>
         <section aria-label="Featured video">
             <div class="video-wrap">
-                <video controls playsinline preload="metadata" poster="assets/images/video-poster.jpg">
+                <!-- autoplay requires muted in many browsers; playsinline helps mobile -->
+                <video id="featuredVideo" controls autoplay muted playsinline preload="metadata" poster="assets/images/video-poster.jpg">
                     <!-- Add your video files in assets/videos/ -->
                     <source src="assets/videos/video.webm" type="video/webm">
                     <source src="assets/videos/video.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </div>
+
+            <!-- hotlinkable text / links under the video -->
+            <div class="video-links" aria-hidden="false">
+                <a href="assets/videos/video.mp4" download>Download MP4</a>
+                <a href="assets/videos/video.webm" target="_blank" rel="noopener noreferrer">Open WEBM</a>
+                <a href="assets/images/video-poster.jpg" target="_blank" rel="noopener noreferrer">View Poster</a>
+            </div>
         </section>
     </main>
+
+    <script>
+        // try to play programmatically for browsers that block autoplay unless muted
+        document.addEventListener('DOMContentLoaded', () => {
+            const v = document.getElementById('featuredVideo');
+            if (v) {
+                v.muted = true;
+                v.play().catch(()=>{ /* ignore play errors */ });
+            }
+        });
+    </script>
 </body>
 </html>
