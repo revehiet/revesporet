@@ -62,7 +62,7 @@
             background:#000;
         }
 
-		/* links under the video */
+        /* links under the video */
         .video-links {
             margin-top:12px;
             display:flex;
@@ -88,10 +88,85 @@
             text-decoration: none;
         }
 
+        /* image gallery grid */
+        .image-gallery {
+            margin-top: 48px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            aspect-ratio: 1 / 1;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 122, 0, 0.3);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: brightness 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            brightness: 0.6;
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            color: var(--orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 16px;
+            font-weight: 600;
+            font-size: 1.1em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
         /* small screens */
+        @media (max-width:1024px){
+            .image-gallery {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width:768px){
+            .image-gallery {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+        }
+
         @media (max-width:480px){
             header h1{ font-size:1.6rem; }
             .video-wrap{ border-radius:12px; }
+            .image-gallery {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -113,15 +188,32 @@
             </div>
 
             <!-- hotlinkable text / links under the video -->
-            <!--  <div class="links" aria-hidden="false">
--                <a href="revehaney@gmail.com" download>Send meg en mail!</a>
--                <a href="www.instagram.com/revesporet/" target="_blank" rel="noopener noreferrer">Instagram</a>
--                <a href="no.linkedin.com/in/leifviljarrevhaug" target="_blank" rel="noopener noreferrer">LinkedIn</a>
--            </div> -->
             <div class="video-links" aria-hidden="false">
                 <a href="mailto:revehaney@gmail.com">Send meg en mail!</a>
                 <a href="https://www.instagram.com/revesporet/" target="_blank" rel="noopener noreferrer">Instagram</a>
                 <a href="https://no.linkedin.com/in/leifviljarrevhaug" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </div>
+        </section>
+
+        <!-- image gallery grid -->
+        <section aria-label="Image gallery">
+            <div class="image-gallery">
+                <div class="gallery-item">
+                    <img src="assets/images/vinkel1_v2.png" alt="Gallery image 1">
+                    <div class="gallery-overlay">Image 1</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/vinkel3_v2.png" alt="Gallery image 2">
+                    <div class="gallery-overlay">Image 2</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/vinkel4.png" alt="Gallery image 3">
+                    <div class="gallery-overlay">Image 3</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/vinkel5_v2.png" alt="Gallery image 4">
+                    <div class="gallery-overlay">Image 4</div>
+                </div>
             </div>
         </section>
     </main>
