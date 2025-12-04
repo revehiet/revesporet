@@ -21,7 +21,7 @@
         html,body{
             height:100%;
             margin:0;
-            background:#202020;
+            background:#ffffff;
             font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
             color:#111;
         }
@@ -167,6 +167,52 @@
             .image-gallery {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
+            }
+        }
+                .video-grid {
+            margin-top: 48px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .video-box {
+            position: relative;
+            overflow: hidden;
+            border-radius: 14px;
+            border: 3px solid var(--orange);
+            box-shadow: 0 8px 24px rgba(17,17,17,0.08);
+            background: #202020;
+        }
+
+        .video-box video {
+            display: block;
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            background: #000;
+        }
+
+        /* responsive video grid */
+        @media (max-width:768px){
+            .video-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+
+        @media (max-width:480px){
+            header h1{ font-size:1.6rem; }
+            .video-wrap{ border-radius:12px; }
+            .image-gallery {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .video-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
