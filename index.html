@@ -69,15 +69,21 @@
             flex-wrap:wrap;
         }
         .video-links a {
-            color:var(--orange);
-            text-decoration:none;
-            font-weight:600;
-            background:transparent;
-            padding:6px 10px;
-            border-radius:6px;
+            color: var(--orange);
+            text-decoration: none;
+            font-weight: 600;
+            background: rgba(255,255,255,0.06); /* subtle box */
+            padding: 8px 14px;
+            border-radius: 12px; /* rounded corners */
+            border: 1px solid rgba(255,255,255,0.08);
+            display: inline-block;
+            transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.12s ease;
         }
         .video-links a:hover {
-            text-decoration:underline;
+            background: rgba(255,255,255,0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+            text-decoration: none;
         }
 
         /* small screens */
@@ -106,9 +112,9 @@
 
             <!-- hotlinkable text / links under the video -->
             <div class="video-links" aria-hidden="false">
-                <a href="assets/videos/video.mp4" download>Download MP4</a>
-                <a href="assets/videos/video.webm" target="_blank" rel="noopener noreferrer">Open WEBM</a>
-                <a href="assets/images/video-poster.jpg" target="_blank" rel="noopener noreferrer">View Poster</a>
+                <a href="revehaney@gmail.com" download>Send meg en mail!</a>
+                <a href="www.instagram.com/revesporet/" target="_blank" rel="noopener noreferrer">Instagram</a>
+                <a href="no.linkedin.com/in/leifviljarrevhaug" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             </div>
         </section>
     </main>
