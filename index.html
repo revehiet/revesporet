@@ -121,7 +121,7 @@
         }
 
         .gallery-item:hover img {
-            brightness: 0.6;
+            filter: brightness(0.6);
         }
 
         .gallery-overlay {
@@ -229,7 +229,6 @@
                 <video id="featuredVideo" controls autoplay muted playsinline preload="metadata" poster="assets/images/video-poster.jpg">
                     <!-- Add your video files in assets/videos/ -->
                     <source src="assets/videos/video.webm" type="video/webm">
-                    <!--<source src="assets/videos/video.mp4" type="video/mp4">-->
                     Your browser does not support the video tag.
                 </video>
             </div>
@@ -267,16 +266,14 @@
         <section aria-label="Additional videos">
             <div class="video-grid">
                 <div class="video-box">
-                    <video controls playsinline preload="metadata" poster="assets/images/video2-poster.jpg">
-                        <source src="assets/videos/video.webm" type="video/webm">
-                        <source src="assets/videos/video.mp4" type="video/mp4">
+                    <video controls autoplay muted playsinline preload="metadata" poster="assets/images/video2-poster.jpg">
+                        <source src="assets/videos/scene1.webm" type="video/webm">
                         Your browser does not support the video tag.
                     </video>
                 </div>
                 <div class="video-box">
-                    <video controls playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
-                        <source src="assets/videos/video.webm" type="video/webm">
-                        <source src="assets/videos/video.mp4" type="video/mp4">
+                    <video controls autoplay muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
+                        <source src="assets/videos/scene2.webm" type="video/webm">
                         Your browser does not support the video tag.
                     </video>
                 </div>
