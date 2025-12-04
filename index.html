@@ -16,7 +16,7 @@
 
         :root{
             --orange: #ff7a00;
-            --max-width: 960px;
+            --max-width: 1400px;
         }
         html,body{
             height:100%;
@@ -46,6 +46,8 @@
 
         .video-wrap{
             width:100%;
+            max-width:1200px; /* limit how wide the video becomes on very large screens */
+            margin:0 auto;     /* center the video */
             background: #ff7a00;
             border-radius:14px;
             overflow:hidden;
@@ -55,7 +57,7 @@
         video{
             display:block;
             width:100%;
-            height:auto;
+            height: clamp(360px, 60vh, 900px); /* larger, responsive height */
             object-fit:cover;
             background:#000;
         }
@@ -69,13 +71,13 @@
             flex-wrap:wrap;
         }
         .video-links a {
-            color: var(--white);
+            color: var(--orange);
             text-decoration: none;
             font-weight: 600;
-            background: rgb(255,255,255,0.08); /* subtle box */
+            background: rgba(255,255,255,0.06); /* subtle box */
             padding: 8px 14px;
             border-radius: 12px; /* rounded corners */
-            border: 1px solid rgba(255, 255, 255, 0.247);
+            border: 1px solid rgba(255,255,255,0.08);
             display: inline-block;
             transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.12s ease;
         }
@@ -87,7 +89,7 @@
         }
 
         /* small screens */
-        @media (max-width:960px){
+        @media (max-width:480px){
             header h1{ font-size:1.6rem; }
             .video-wrap{ border-radius:12px; }
         }
@@ -111,11 +113,16 @@
             </div>
 
             <!-- hotlinkable text / links under the video -->
-            <div class="links" aria-hidden="false">
-                <a href="revehaney@gmail.com" download>Send meg en mail!</a>
-                <a href="www.instagram.com/revesporet/" target="_blank" rel="noopener noreferrer">Instagram</a>
-                <a href="no.linkedin.com/in/leifviljarrevhaug" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-            </div>
+-            <div class="links" aria-hidden="false">
+-                <a href="revehaney@gmail.com" download>Send meg en mail!</a>
+-                <a href="www.instagram.com/revesporet/" target="_blank" rel="noopener noreferrer">Instagram</a>
+-                <a href="no.linkedin.com/in/leifviljarrevhaug" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+-            </div>
++            <div class="video-links" aria-hidden="false">
++                <a href="mailto:revehaney@gmail.com">Send meg en mail!</a>
++                <a href="https://www.instagram.com/revesporet/" target="_blank" rel="noopener noreferrer">Instagram</a>
++                <a href="https://no.linkedin.com/in/leifviljarrevhaug" target="_blank" rel="noopener noreferrer">LinkedIn</a>
++            </div>
         </section>
     </main>
 
