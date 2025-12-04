@@ -3,8 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Revesporet</title>
+    <title>REVESPORET</title>
     <style>
+
+		@font-face {
+            font-family: "Poppins";
+            src: url("assets/fonts/poppins/Poppins-ExtraBold.ttf") format("woff2"),
+                 url("assets/fonts/poppins/Poppins-Regular.woff") format("woff");
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
         :root{
             --orange: #ff7a00;
             --max-width: 960px;
@@ -17,7 +27,7 @@
             color:#111;
         }
         header{
-            text-align:center;
+            text-align:left;
             padding:48px 16px;
         }
         header h1{
@@ -26,6 +36,7 @@
             color:var(--orange);
             letter-spacing:0.5px;
             font-weight:700;
+            font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
         }
 
         main{
@@ -46,7 +57,7 @@
             display:block;
             width:100%;
             height:auto;
-            object-fit:cover;
+            object-fit:fill;
             background:#000;
         }
 
