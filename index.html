@@ -69,13 +69,13 @@
             flex-wrap:wrap;
         }
         .video-links a {
-            color: var(--orange);
+            color: var(--white);
             text-decoration: none;
             font-weight: 600;
-            background: rgba(255,255,255,0.06); /* subtle box */
+            background: rgb(255,255,255,0.08); /* subtle box */
             padding: 8px 14px;
             border-radius: 12px; /* rounded corners */
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.247);
             display: inline-block;
             transition: background 0.15s ease, transform 0.12s ease, box-shadow 0.12s ease;
         }
@@ -87,7 +87,7 @@
         }
 
         /* small screens */
-        @media (max-width:480px){
+        @media (max-width:960px){
             header h1{ font-size:1.6rem; }
             .video-wrap{ border-radius:12px; }
         }
@@ -105,13 +105,13 @@
                 <video id="featuredVideo" controls autoplay muted playsinline preload="metadata" poster="assets/images/video-poster.jpg">
                     <!-- Add your video files in assets/videos/ -->
                     <source src="assets/videos/video.webm" type="video/webm">
-                    <source src="assets/videos/video.mp4" type="video/mp4">
+                    <!--<source src="assets/videos/video.mp4" type="video/mp4">-->
                     Your browser does not support the video tag.
                 </video>
             </div>
 
             <!-- hotlinkable text / links under the video -->
-            <div class="video-links" aria-hidden="false">
+            <div class="links" aria-hidden="false">
                 <a href="revehaney@gmail.com" download>Send meg en mail!</a>
                 <a href="www.instagram.com/revesporet/" target="_blank" rel="noopener noreferrer">Instagram</a>
                 <a href="no.linkedin.com/in/leifviljarrevhaug" target="_blank" rel="noopener noreferrer">LinkedIn</a>
