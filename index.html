@@ -620,15 +620,14 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* Night mode: toggle background and colors */
+        /* Night mode: toggle background and colors (keep orange accents unchanged) */
         body.night-mode { background: #2b2b2b; color: #eaeaea; }
         body.night-mode header { background: #1f1f1f; border-bottom-color: rgba(255,255,255,0.06); }
         body.night-mode nav a { color: #eee; }
         body.night-mode .site-meta { color: #cfcfcf; }
-        body.night-mode .section-title { color: #ffb86b; }
-        body.night-mode .section-frame { border-color: rgba(255,255,255,0.06); }
-        body.night-mode .video-wrap, body.night-mode .video-box { background: #111; border-color: rgba(255,122,0,0.12); }
-        body.night-mode .gallery-item { box-shadow: 0 4px 12px rgba(0,0,0,0.6); border-color: rgba(255,122,0,0.14); }
+        /* Keep section titles and frame borders using the orange accent (var(--orange)) */
+        body.night-mode .video-wrap, body.night-mode .video-box { background: #111; /* keep border-color as var(--orange) */ }
+        body.night-mode .gallery-item { box-shadow: 0 4px 12px rgba(0,0,0,0.6); /* keep border-color as var(--orange) */ }
 
     </style>
 </head>
@@ -639,10 +638,10 @@
             <a href="index.html">HJEM</a>
             <a href="om-meg.html">OM MEG</a>
             <div class="nav-controls" aria-hidden="false">
-                <label class="switch" title="Night mode">
-                    <input type="checkbox" id="nightToggle" aria-label="Night mode">
+                <label class="switch" title="Nattmodus">
+                    <input type="checkbox" id="nightToggle" aria-label="Nattmodus">
                     <span class="slider" aria-hidden="true"></span>
-                    <span class="switch-tooltip" aria-hidden="true">Night mode</span>
+                    <span class="switch-tooltip" aria-hidden="true">Nattmodus</span>
                 </label>
             </div>
         </nav>
