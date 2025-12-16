@@ -35,7 +35,8 @@
             margin:0;
             background:#ffffff;
             font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            color:#111;
+            color:#000000;
+            transition: background-color 240ms ease, color 240ms ease;
         }
 
         header
@@ -298,6 +299,11 @@
             letter-spacing: 0.2px;
         }
 
+        /* Smooth transitions for theme changes */
+        body, header, .section-frame, .video-wrap, .video-box, .site-meta, .section-title {
+            transition: background-color 240ms ease, color 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+        }
+
         /* image gallery grid */
         .image-gallery 
         {
@@ -540,7 +546,7 @@
           position: absolute;
           cursor: pointer;
           inset: 0;
-          background: white;
+          background: rgb(113, 113, 113);
           border-radius: 50px;
           overflow: hidden;
           transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
@@ -554,7 +560,7 @@
           right: 0.3em;
           bottom: 0.3em;
           transform: translateX(150%);
-          background-color: #59d102;
+          background-color: #464646;
           border-radius: inherit;
           transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
         }
@@ -572,7 +578,7 @@
         }
 
         .switch input:focus + .slider {
-          box-shadow: 0 0 1px #59d102;
+          box-shadow: 0 0 1px #ffffff;
         }
 
         /* orange outline when checked, and stronger outline when focused+checked */
@@ -591,6 +597,39 @@
           transform: translateX(-150%);
         }
 
+        /* Tooltip for the switch */
+        .switch-tooltip {
+            position: absolute;
+            top: -2.2em;
+            left: 50%;
+            transform: translateX(-50%) translateY(6px);
+            background: rgba(0,0,0,0.85);
+            color: #fff;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 180ms ease, transform 180ms ease;
+            z-index: 100;
+        }
+        .switch:hover .switch-tooltip,
+        .switch input:focus + .slider + .switch-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Night mode: toggle background and colors */
+        body.night-mode { background: #2b2b2b; color: #eaeaea; }
+        body.night-mode header { background: #1f1f1f; border-bottom-color: rgba(255,255,255,0.06); }
+        body.night-mode nav a { color: #eee; }
+        body.night-mode .site-meta { color: #cfcfcf; }
+        body.night-mode .section-title { color: #ffb86b; }
+        body.night-mode .section-frame { border-color: rgba(255,255,255,0.06); }
+        body.night-mode .video-wrap, body.night-mode .video-box { background: #111; border-color: rgba(255,122,0,0.12); }
+        body.night-mode .gallery-item { box-shadow: 0 4px 12px rgba(0,0,0,0.6); border-color: rgba(255,122,0,0.14); }
+
     </style>
 </head>
 <body>
@@ -600,9 +639,10 @@
             <a href="index.html">HJEM</a>
             <a href="om-meg.html">OM MEG</a>
             <div class="nav-controls" aria-hidden="false">
-                <label class="switch" title="Toggle night mode">
-                    <input type="checkbox" id="nightToggle" aria-label="Toggle night mode">
+                <label class="switch" title="Night mode">
+                    <input type="checkbox" id="nightToggle" aria-label="Night mode">
                     <span class="slider" aria-hidden="true"></span>
+                    <span class="switch-tooltip" aria-hidden="true">Night mode</span>
                 </label>
             </div>
         </nav>
@@ -772,6 +812,29 @@
                 v.muted = true;
                 v.play().catch(()=>{ /* ignore play errors */ });
             }
+
+            // Night mode initialization: apply saved preference and hook up toggle
+            (function() {
+                const toggle = document.getElementById('nightToggle');
+                function applyNight(on) {
+                    document.body.classList.toggle('night-mode', !!on);
+                }
+                try {
+                    const saved = localStorage.getItem('nightMode');
+                    if (saved === '1') {
+                        applyNight(true);
+                        if (toggle) toggle.checked = true;
+                    }
+                } catch(e) { /* ignore localStorage errors */ }
+
+                if (toggle) {
+                    toggle.addEventListener('change', (e) => {
+                        const on = e.target.checked;
+                        applyNight(on);
+                        try { localStorage.setItem('nightMode', on ? '1' : '0'); } catch(e) {}
+                    });
+                }
+            })();
 
             // Lightbox functionality for gallery images (scoped per gallery)
             const lightbox = document.getElementById('lightbox');
