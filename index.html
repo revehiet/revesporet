@@ -516,14 +516,80 @@
         .lightbox-prev:focus,
         .lightbox-next:focus { outline: 2px solid var(--orange); outline-offset: 2px; }
 
-        /* Sunlit Sea video tweaks: autoplay/loop and hide controls */
-        .sunlit-video {
-            background: #000;
+        /* Navbar switch styles */
+        .nav-controls { display:flex; align-items:center; margin-left:12px; }
+        /* The switch - the box around the slider */
+        .switch {
+          font-size: 17px;
+          position: relative;
+          display: inline-block;
+          width: 3.5em;
+          height: 2em;
         }
-        /* attempt to hide native controls if any are present */
-        .sunlit-video::-webkit-media-controls { display:none !important; }
-        .sunlit-video::-webkit-media-controls-enclosure { display:none !important; }
-        .sunlit-video::-webkit-media-controls-panel { display:none !important; }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+          position: absolute;
+        }
+
+        /* The slider */
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          inset: 0;
+          background: white;
+          border-radius: 50px;
+          overflow: hidden;
+          transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+        }
+
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 1.4em;
+          width: 1.4em;
+          right: 0.3em;
+          bottom: 0.3em;
+          transform: translateX(150%);
+          background-color: #59d102;
+          border-radius: inherit;
+          transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+        }
+
+        .slider:after {
+          position: absolute;
+          content: "";
+          height: 1.4em;
+          width: 1.4em;
+          left: 0.3em;
+          bottom: 0.3em;
+          background-color: #cccccc;
+          border-radius: inherit;
+          transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+        }
+
+        .switch input:focus + .slider {
+          box-shadow: 0 0 1px #59d102;
+        }
+
+        /* orange outline when checked, and stronger outline when focused+checked */
+        .switch input:checked + .slider {
+          box-shadow: 0 0 0 3px rgba(255,122,0,0.18);
+        }
+        .switch input:focus:checked + .slider {
+          box-shadow: 0 0 0 4px rgba(255,122,0,0.26);
+        }
+
+        .switch input:checked + .slider:before {
+          transform: translateY(0);
+        }
+
+        .switch input:checked + .slider::after {
+          transform: translateX(-150%);
+        }
 
     </style>
 </head>
@@ -533,6 +599,12 @@
         <nav>
             <a href="index.html">HJEM</a>
             <a href="om-meg.html">OM MEG</a>
+            <div class="nav-controls" aria-hidden="false">
+                <label class="switch" title="Toggle night mode">
+                    <input type="checkbox" id="nightToggle" aria-label="Toggle night mode">
+                    <span class="slider" aria-hidden="true"></span>
+                </label>
+            </div>
         </nav>
     </header>
 
@@ -700,33 +772,6 @@
                 v.muted = true;
                 v.play().catch(()=>{ /* ignore play errors */ });
             }
-
-            // Auto-loop/hide controls for videos in the "Sunlit Sea" section
-            (function() {
-                const sections = Array.from(document.querySelectorAll('section'));
-                const sunlit = sections.find(s => {
-                    const h = s.querySelector('.section-title');
-                    return h && /Sunlit Sea/i.test(h.textContent);
-                });
-                if (sunlit) {
-                    const vids = Array.from(sunlit.querySelectorAll('video'));
-                    vids.forEach(video => {
-                        try {
-                            // remove visible controls, ensure muted + loop + autoplay
-                            video.removeAttribute('controls');
-                            video.muted = true;
-                            video.loop = true;
-                            video.playsInline = true;
-                            video.setAttribute('autoplay', '');
-                            video.classList.add('sunlit-video');
-                            // try to play programmatically
-                            video.play().catch(() => { /* ignore */ });
-                            // fallback to replay on ended (some browsers ignore loop on certain streams)
-                            video.addEventListener('ended', () => { video.play().catch(()=>{}); });
-                        } catch(e) { /* ignore errors */ }
-                    });
-                }
-            })();
 
             // Lightbox functionality for gallery images (scoped per gallery)
             const lightbox = document.getElementById('lightbox');
