@@ -516,6 +516,15 @@
         .lightbox-prev:focus,
         .lightbox-next:focus { outline: 2px solid var(--orange); outline-offset: 2px; }
 
+        /* Sunlit Sea video tweaks: autoplay/loop and hide controls */
+        .sunlit-video {
+            background: #000;
+        }
+        /* attempt to hide native controls if any are present */
+        .sunlit-video::-webkit-media-controls { display:none !important; }
+        .sunlit-video::-webkit-media-controls-enclosure { display:none !important; }
+        .sunlit-video::-webkit-media-controls-panel { display:none !important; }
+
     </style>
 </head>
 <body>
@@ -691,6 +700,33 @@
                 v.muted = true;
                 v.play().catch(()=>{ /* ignore play errors */ });
             }
+
+            // Auto-loop/hide controls for videos in the "Sunlit Sea" section
+            (function() {
+                const sections = Array.from(document.querySelectorAll('section'));
+                const sunlit = sections.find(s => {
+                    const h = s.querySelector('.section-title');
+                    return h && /Sunlit Sea/i.test(h.textContent);
+                });
+                if (sunlit) {
+                    const vids = Array.from(sunlit.querySelectorAll('video'));
+                    vids.forEach(video => {
+                        try {
+                            // remove visible controls, ensure muted + loop + autoplay
+                            video.removeAttribute('controls');
+                            video.muted = true;
+                            video.loop = true;
+                            video.playsInline = true;
+                            video.setAttribute('autoplay', '');
+                            video.classList.add('sunlit-video');
+                            // try to play programmatically
+                            video.play().catch(() => { /* ignore */ });
+                            // fallback to replay on ended (some browsers ignore loop on certain streams)
+                            video.addEventListener('ended', () => { video.play().catch(()=>{}); });
+                        } catch(e) { /* ignore errors */ }
+                    });
+                }
+            })();
 
             // Lightbox functionality for gallery images (scoped per gallery)
             const lightbox = document.getElementById('lightbox');
