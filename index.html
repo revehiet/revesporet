@@ -1,10 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="no">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Revesporet</title>
-    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <meta name="description" content="Revesporet — portfolio for Leif Viljar, se showreel å finn ut mer!">
+    <meta name="keywords" content="Leif Viljar, Revesporet, infomercial, explainers, 3D, digital art, film, innholdsproduksjon, videograf">
+    <meta name="author" content="Leif Viljar">
+    <meta property="og:title" content="Revesporet — Leif Viljar">
+    <meta property="og:description" content="Portfolio og showreel for Leif Viljar (Revesporet)">
+    <meta property="og:image" content="assets/images/profile.jpg">
+    <meta property="og:type" content="website">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png" />
     <style>
 
         @font-face 
@@ -27,7 +34,7 @@
             height:100%;
             margin:0;
             background:#ffffff;
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
             color:#111;
         }
 
@@ -296,8 +303,9 @@
         {
             margin-top: 48px;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 16px;
+            justify-content: center; /* center when fewer items than available columns */
         }
 
         .gallery-item 
@@ -334,41 +342,21 @@
 
         .gallery-overlay 
         {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            color: var(--orange);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 16px;
-            font-weight: 600;
-            font-size: 1.1em;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .gallery-item:hover .gallery-overlay 
-        {
-            opacity: 1;
+            display: none; /* hide hover overlays while keeping captions in DOM for lightbox use */
         }
 
         /* small screens */
         @media (max-width:1024px)
         {
             .image-gallery {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
         }
 
         @media (max-width:768px)
         {
             .image-gallery {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
                 gap: 12px;
             }
         }
@@ -436,7 +424,7 @@
 
             .image-gallery 
             {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
                 gap: 10px;
             }
 
@@ -445,6 +433,88 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Styles for the short site purpose/meta section */
+        .site-meta
+        {
+            text-align: center;
+            color: #666;
+            margin: 12px 0 28px;
+            font-size: 0.98rem;
+        }
+
+        /* Lightbox / expandable image viewer */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            padding: 24px;
+        }
+        .lightbox[aria-hidden="false"] { display:flex; }
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 85%;
+            text-align: center;
+            position: relative;
+            color: #fff;
+        }
+        .lightbox img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.6);
+            display: block;
+            margin: 0 auto;
+        }
+        .lightbox-caption {
+            margin-top: 12px;
+            font-size: 0.95rem;
+            color: #ddd;
+        }
+        .lightbox-counter {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0,0,0,0.45);
+            color: #fff;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+        .lightbox-close,
+        .lightbox-prev,
+        .lightbox-next {
+            position: absolute;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            font-size: 1.4rem;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        .lightbox-close {
+            top: 12px;
+            right: 12px;
+        }
+        .lightbox-prev {
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .lightbox-next {
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .lightbox-close:focus,
+        .lightbox-prev:focus,
+        .lightbox-next:focus { outline: 2px solid var(--orange); outline-offset: 2px; }
 
     </style>
 </head>
@@ -505,25 +575,35 @@
         </div>
         </div>
 
+        <section aria-label="Image gallery">
+            <h2 class="section-title">Oppdrag for Salmon Solutions UB</h2>
+            <div class="image-gallery">
+                <div class="gallery-item">
+                    <img src="assets/images/s_1.webp" alt="Gallery image 1">
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/s_2.webp" alt="Gallery image 2">
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/s_3.webp" alt="Gallery image 3">
+                </div>
+            </div>
+        </section>       
         <!-- image gallery grid SUNLIT SEA -->
         <section aria-label="Image gallery">
             <h2 class="section-title">Oppdrag for Sunlit Sea</h2>
             <div class="image-gallery">
                 <div class="gallery-item">
                     <img src="assets/images/1.webp" alt="Gallery image 1">
-                    <div class="gallery-overlay">Image 1</div>
                 </div>
                 <div class="gallery-item">
                     <img src="assets/images/2.webp" alt="Gallery image 2">
-                    <div class="gallery-overlay">Image 2</div>
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/2.webp" alt="Gallery image 3">
-                    <div class="gallery-overlay">Image 3</div>
+                    <img src="assets/images/3.webp" alt="Gallery image 3">
                 </div>
                 <div class="gallery-item">
                     <img src="assets/images/4.webp" alt="Gallery image 4">
-                    <div class="gallery-overlay">Image 4</div>
                 </div>
             </div>
         </section>
@@ -545,49 +625,63 @@
             </div>
         </section>
                 <!-- image gallery grid ANNET -->
-                 <!--        <section aria-label="Image gallery">
-            <h2 class="section-title">Oppdrag for Getek</h2>
-            <div class="image-gallery">
-                <div class="gallery-item">
-                    <img src="assets/images/1.webp" alt="Gallery image 1">
-                    <div class="gallery-overlay">Image 1</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/images/2.webp" alt="Gallery image 2">
-                    <div class="gallery-overlay">Image 2</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/images/2.webp" alt="Gallery image 3">
-                    <div class="gallery-overlay">Image 3</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/images/4.webp" alt="Gallery image 4">
-                    <div class="gallery-overlay">Image 4</div>
-                </div>
-            </div>
-
         <section aria-label="Image gallery">
             <h2 class="section-title">Oppdrag for PurePipe</h2>
             <div class="image-gallery">
                 <div class="gallery-item">
-                    <img src="assets/images/1.webp" alt="Gallery image 1">
-                    <div class="gallery-overlay">Image 1</div>
+                    <img src="assets/images/p_1.webp" alt="Gallery image 1">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/2.webp" alt="Gallery image 2">
-                    <div class="gallery-overlay">Image 2</div>
+                    <img src="assets/images/p_2.webp" alt="Gallery image 2">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/2.webp" alt="Gallery image 3">
-                    <div class="gallery-overlay">Image 3</div>
-                </div>
-                <div class="gallery-item">
-                    <img src="assets/images/4.webp" alt="Gallery image 4">
-                    <div class="gallery-overlay">Image 4</div>
+                    <img src="assets/images/p_4.webp" alt="Gallery image 4">
                 </div>
             </div>
         </section>
-    </main> -->
+
+        <section aria-label="Image gallery">
+            <h2 class="section-title">Oppdrag for Getek</h2>
+            <div class="image-gallery">
+                <div class="gallery-item">
+                    <img src="assets/images/g_1.webp" alt="Gallery image 1">
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/g_2.webp" alt="Gallery image 2">
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/g_4.webp" alt="Gallery image 4">
+                </div>
+            </div>
+        </section>
+
+         <section aria-label="Image gallery">
+            <h2 class="section-title">Oppdrag for TrawlTech UB</h2>
+            <div class="image-gallery">
+                <div class="gallery-item">
+                    <img src="assets/images/trawl_1.webp" alt="Gallery image 1">
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/trawl_3.webp" alt="Gallery image 2">
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/trawl_4.webp" alt="Gallery image 4">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Lightbox modal for expandable gallery images -->
+    <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="Image viewer">
+        <div class="lightbox-content" role="document">
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <div class="lightbox-counter" aria-hidden="true"></div>
+            <button class="lightbox-prev" aria-label="Previous image" type="button">&#10094;</button>
+            <img src="" alt="">
+            <p class="lightbox-caption" aria-live="polite"></p>
+            <button class="lightbox-next" aria-label="Next image" type="button">&#10095;</button>
+        </div>
+    </div>
 
     <script>
         // try to play programmatically for browsers that block autoplay unless muted
@@ -597,6 +691,107 @@
                 v.muted = true;
                 v.play().catch(()=>{ /* ignore play errors */ });
             }
+
+            // Lightbox functionality for gallery images (scoped per gallery)
+            const lightbox = document.getElementById('lightbox');
+            const lbImg = lightbox.querySelector('img');
+            const lbCaption = lightbox.querySelector('.lightbox-caption');
+            const lbCounter = lightbox.querySelector('.lightbox-counter');
+            const btnClose = lightbox.querySelector('.lightbox-close');
+            const btnPrev = lightbox.querySelector('.lightbox-prev');
+            const btnNext = lightbox.querySelector('.lightbox-next');
+
+            // Track the currently active gallery's images and index
+            let activeImages = [];
+            let currentIndex = -1;
+
+            function updateCounter() {
+                if (!activeImages.length) {
+                    lbCounter.textContent = '';
+                    return;
+                }
+                lbCounter.textContent = (currentIndex + 1) + ' / ' + activeImages.length;
+            }
+
+            function openLightbox(imagesArray, index) {
+                if (!Array.isArray(imagesArray) || index < 0 || index >= imagesArray.length) return;
+                activeImages = imagesArray;
+                currentIndex = index;
+                const data = activeImages[currentIndex];
+                lbImg.src = data.src;
+                lbImg.alt = data.alt || data.caption || 'Gallery image';
+                lbCaption.textContent = data.caption || '';
+                updateCounter();
+                lightbox.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+                btnClose.focus();
+            }
+
+            function closeLightbox() {
+                lightbox.setAttribute('aria-hidden', 'true');
+                document.body.style.overflow = '';
+                lbImg.src = '';
+                activeImages = [];
+                currentIndex = -1;
+                updateCounter();
+            }
+
+            function showPrev() {
+                if (!activeImages.length) return;
+                const prevIndex = (currentIndex - 1 + activeImages.length) % activeImages.length;
+                openLightbox(activeImages, prevIndex);
+            }
+            function showNext() {
+                if (!activeImages.length) return;
+                const nextIndex = (currentIndex + 1) % activeImages.length;
+                openLightbox(activeImages, nextIndex);
+            }
+
+            // For each gallery, build its own image list and attach handlers scoped to that list
+            const galleries = Array.from(document.querySelectorAll('.image-gallery'));
+            galleries.forEach(gallery => {
+                const items = Array.from(gallery.querySelectorAll('.gallery-item'));
+                const imagesForGallery = items.map(item => {
+                    const img = item.querySelector('img');
+                    const overlay = item.querySelector('.gallery-overlay');
+                    return {
+                        src: img ? img.src : '',
+                        alt: img ? img.alt : '',
+                        caption: overlay ? overlay.textContent.trim() : ''
+                    };
+                });
+
+                items.forEach((item, i) => {
+                    // make item keyboard focusable/activatable
+                    item.setAttribute('tabindex', '0');
+                    item.setAttribute('role', 'button');
+                    item.addEventListener('click', () => openLightbox(imagesForGallery, i));
+                    item.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            openLightbox(imagesForGallery, i);
+                        }
+                    });
+                });
+            });
+
+            btnClose.addEventListener('click', closeLightbox);
+            btnPrev.addEventListener('click', showPrev);
+            btnNext.addEventListener('click', showNext);
+
+            // close when clicking outside content (on the overlay)
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+
+            // keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (lightbox.getAttribute('aria-hidden') === 'false') {
+                    if (e.key === 'Escape') closeLightbox();
+                    if (e.key === 'ArrowLeft') showPrev();
+                    if (e.key === 'ArrowRight') showNext();
+                }
+            });
         });
     </script>
 </body>
