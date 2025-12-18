@@ -12,7 +12,6 @@
     <meta property="og:image" content="assets/images/profile.jpg">
     <meta property="og:type" content="website">
     <link rel="icon" type="image/png" href="assets/images/favicon.png" />
-
     <style>
 
         @font-face 
@@ -945,42 +944,6 @@
                 }
             });
         });
-    </script>
-
-     <script>
-    (() => {
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-        let currentScroll = window.scrollY;
-        let targetScroll = currentScroll;
-        let isTicking = false;
-        const ease = 0.1; // tweak for smoother or snappier scroll
-
-        function onWheel(e) {
-        e.preventDefault();
-        targetScroll += e.deltaY;
-        targetScroll = Math.max(
-            0,
-            Math.min(targetScroll, document.body.scrollHeight - window.innerHeight)
-        );
-
-        if (!isTicking) requestAnimationFrame(update);
-        isTicking = true;
-        }
-
-        function update() {
-        currentScroll += (targetScroll - currentScroll) * ease;
-        window.scrollTo(0, currentScroll);
-
-        if (Math.abs(targetScroll - currentScroll) > 0.5) {
-            requestAnimationFrame(update);
-        } else {
-            isTicking = false;
-        }
-        }
-
-        window.addEventListener("wheel", onWheel, { passive: false });
-    })();
     </script>
 </body>
 </html>
