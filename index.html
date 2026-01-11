@@ -381,13 +381,15 @@
 
         .video-grid
         {
-            margin-top: 48px;
+            margin: 72px auto 0; /* add a larger top gap and keep centered */
+            clear: both; /* ensure the grid doesn't overlap floated or positioned content above */
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* responsive: scales down as more videos are added */
             gap: 24px;
             max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
+            justify-content: center; /* center items when fewer columns than available */
+            justify-items: center; /* center content inside each cell to avoid visual overlap */
+            align-items: start;
         }
 
         .video-box
@@ -761,6 +763,29 @@
                 </div>
                 <div class="gallery-item">
                     <img src="assets/images/p_4.webp" alt="Gallery image 4">
+                </div>
+            </div>
+        </section>
+
+        <section aria-label="Additional videos">
+            <div class="video-grid">
+                <div class="video-box">
+                    <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video2-poster.jpg">
+                        <source src="assets/videos/P1.webm" type="video/webm">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="video-box">
+                    <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
+                        <source src="assets/videos/P2.webm" type="video/webm">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="video-box">
+                    <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
+                        <source src="assets/videos/P3.webm" type="video/webm">
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
             </div>
         </section>
