@@ -12,6 +12,8 @@
     <meta property="og:image" content="assets/images/profile.jpg">
     <meta property="og:type" content="website">
     <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+    <link href='https://fonts.googleapis.com/css?family=Poppins:700' rel='stylesheet' type='text/css'>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
 
         @font-face 
@@ -38,6 +40,8 @@
             color:#000000;
             transition: background-color 240ms ease, color 240ms ease;
             scroll-behavior: smooth;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */ 
 
         }
 
@@ -306,8 +310,16 @@
             transition: background-color 240ms ease, color 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
         }
 
+        .site-meta
+        {
+            text-align: center;
+            color: #cccccc;
+            margin: 12px 0 28px;
+            font-size: 0.98rem;
+        }
+
         /* image gallery grid */
-        .image-gallery 
+        .image-gallery
         {
             margin-top: 48px;
             display: grid;
@@ -442,15 +454,6 @@
             {
                 grid-template-columns: 1fr;
             }
-        }
-
-        /* Styles for the short site purpose/meta section */
-        .site-meta
-        {
-            text-align: center;
-            color: #666;
-            margin: 12px 0 28px;
-            font-size: 0.98rem;
         }
 
         /* Lightbox / expandable image viewer */
@@ -625,13 +628,25 @@
         }
 
         /* Night mode: toggle background and colors (keep orange accents unchanged) */
-        body.night-mode { background: #181818; color: #eaeaea; }
-        body.night-mode header { background: #1f1f1f; border-bottom-color: rgba(255,255,255,0.06); }
+        body.night-mode { background: #2c2c2c; color: #eaeaea; }
+        body.night-mode header { background: rgba(31, 31, 31, 0.98); border-bottom: 1px solid rgba(255,255,255,0.06); }
         body.night-mode nav a { color: #eee; }
         body.night-mode .site-meta { color: #cfcfcf; }
         /* Keep section titles and frame borders using the orange accent (var(--orange)) */
         body.night-mode .video-wrap, body.night-mode .video-box { background: #111; /* keep border-color as var(--orange) */ }
         body.night-mode .gallery-item { box-shadow: 0 4px 12px rgba(0,0,0,0.6); /* keep border-color as var(--orange) */ }
+
+        /* Header positioning */
+        header {
+            position: relative;
+            z-index: 100;
+        }
+
+        main {
+            position: relative;
+            z-index: 50;
+            background: transparent;
+        }
 
     </style>
 </head>
@@ -691,8 +706,7 @@
             <div class="video-wrap">
                 <!-- autoplay requires muted in many browsers; playsinline helps mobile -->
                 <video id="featuredVideo" controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video-poster.jpg">
-                    <!-- Add your video files in assets/videos/ -->
-                    <source src="assets/videos/video.webm" type="video/webm">
+                    <source src="assets/videos/video/index.m3u8" type="application/x-mpegURL">
                     Your browser does not support the video tag.
                 </video>
             </div>
@@ -739,13 +753,13 @@
             <div class="video-grid">
                 <div class="video-box">
                     <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video2-poster.jpg">
-                        <source src="assets/videos/Scene1.webm" type="video/webm">
+                        <source src="assets/videos/Scene1/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
                 <div class="video-box">
                     <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
-                        <source src="assets/videos/Scene2.webm" type="video/webm">
+                        <source src="assets/videos/Scene2/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
@@ -771,19 +785,19 @@
             <div class="video-grid">
                 <div class="video-box">
                     <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video2-poster.jpg">
-                        <source src="assets/videos/P1.webm" type="video/webm">
+                        <source src="assets/videos/P1/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
                 <div class="video-box">
                     <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
-                        <source src="assets/videos/P2.webm" type="video/webm">
+                        <source src="assets/videos/P2/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
                 <div class="video-box">
                     <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
-                        <source src="assets/videos/P3.webm" type="video/webm">
+                        <source src="assets/videos/P3/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
@@ -812,19 +826,19 @@
             <div class="video-grid">
                 <div class="video-box">
                     <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video2-poster.jpg">
-                        <source src="assets/videos/W1.webm" type="video/webm">
+                        <source src="assets/videos/W1/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
                 <div class="video-box">
                     <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
-                        <source src="assets/videos/W2.webm" type="video/webm">
+                        <source src="assets/videos/W2/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
                 <div class="video-box">
                     <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
-                        <source src="assets/videos/W3.webm" type="video/webm">
+                        <source src="assets/videos/W3/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
@@ -860,12 +874,38 @@
     </div>
 
     <script>
-        // try to play programmatically for browsers that block autoplay unless muted
+        // Initialize HLS for all video elements
+        function initializeHLS() {
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                const source = video.querySelector('source[type="application/x-mpegURL"]');
+                if (!source) return;
+
+                // Check if native HLS support exists (Safari)
+                if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = source.src;
+                } else if (Hls.isSupported()) {
+                    // Use HLS.js for other browsers
+                    const hls = new Hls();
+                    hls.loadSource(source.src);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        video.play().catch(() => {});
+                    });
+                } else {
+                    console.warn('HLS not supported on this browser');
+                }
+            });
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeHLS);
+        
+        // Original script follows
         document.addEventListener('DOMContentLoaded', () => {
             const v = document.getElementById('featuredVideo');
             if (v) {
                 v.muted = true;
-                v.play().catch(()=>{ /* ignore play errors */ });
             }
 
             // Night mode initialization: apply saved preference and hook up toggle
