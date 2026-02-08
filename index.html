@@ -35,14 +35,10 @@
         {
             min-height: 100%;
             margin:0;
-            background:#ffffff;
             font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
             color:#000000;
             transition: background-color 240ms ease, color 240ms ease;
             scroll-behavior: smooth;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none;  /* IE and Edge */ 
-
         }
 
         header
@@ -628,7 +624,7 @@
         }
 
         /* Night mode: toggle background and colors (keep orange accents unchanged) */
-        body.night-mode { background: #2c2c2c; color: #eaeaea; }
+        body.night-mode { color: #eaeaea; }
         body.night-mode header { background: rgba(31, 31, 31, 0.98); border-bottom: 1px solid rgba(255,255,255,0.06); }
         body.night-mode nav a { color: #eee; }
         body.night-mode .site-meta { color: #cfcfcf; }
@@ -646,6 +642,21 @@
             position: relative;
             z-index: 50;
             background: transparent;
+        }
+
+        /* Viewport-only gradient layer (covers only the visible screen, not the whole document) */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0 0 auto 0;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            background: linear-gradient(180deg, #e5d9f0 0%, #d9f0f5 100%);
+        }
+
+        body.night-mode::before {
+            background: linear-gradient(180deg, #4d00a5 0%, #2b3a4b 100%);
         }
 
     </style>
