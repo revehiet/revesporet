@@ -14,6 +14,7 @@
     <link rel="icon" type="image/png" href="assets/images/favicon.png" />
     <link href='https://fonts.googleapis.com/css?family=Poppins:700' rel='stylesheet' type='text/css'>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js"></script>
     <style>
 
         @font-face 
@@ -241,6 +242,7 @@
 
         .video-wrap
         {
+            position: relative;
             width:100%;
             max-width:1200px; /* limit how wide the video becomes on very large screens */
             margin:0 auto;     /* center the video */
@@ -408,6 +410,17 @@
             border: 3px solid var(--orange);
             box-shadow: 0 8px 24px rgba(17,17,17,0.08);
             background: #202020;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .video-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 122, 0, 0.3);
+        }
+
+        /* 9:16 aspect ratio only for SoMe section */
+        #SoMe .video-box {
+            aspect-ratio: 9 / 16;
+            max-width: 280px;
         }
 
         .video-box video
@@ -417,7 +430,79 @@
             height: auto;
             object-fit: cover;
             background: #000;
+            transition: filter 0.3s ease;
         }
+        .video-box:hover video {
+            filter: brightness(0.6);
+        }
+        #SoMe .video-box video {
+            height: 100%;
+        }
+
+        /* Mute toggle overlay for SoMe videos */
+        #SoMe .video-box {
+            position: relative;
+            cursor: pointer;
+        }
+        #SoMe .video-mute-btn {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: background 0.2s ease;
+        }
+        #SoMe .video-mute-btn:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+        #SoMe .video-mute-btn img {
+            width: 24px;
+            height: 24px;
+        }
+        #SoMe .video-mute-btn .icon-muted { display: none; }
+        #SoMe .video-mute-btn .icon-unmuted { display: block; }
+        #SoMe .video-mute-btn.muted .icon-muted { display: block; }
+        #SoMe .video-mute-btn.muted .icon-unmuted { display: none; }
+
+        /* Mute toggle for featured video */
+        .video-wrap .video-mute-btn {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: background 0.2s ease;
+            z-index: 10;
+        }
+        .video-wrap .video-mute-btn:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+        .video-wrap .video-mute-btn img {
+            width: 24px;
+            height: 24px;
+        }
+        .video-wrap .video-mute-btn .icon-muted { display: none; }
+        .video-wrap .video-mute-btn .icon-unmuted { display: block; }
+        .video-wrap .video-mute-btn.muted .icon-muted { display: block; }
+        .video-wrap .video-mute-btn.muted .icon-unmuted { display: none; }
 
         /* responsive video grid */
         @media (max-width:768px)
@@ -525,103 +610,61 @@
         .lightbox-prev:focus,
         .lightbox-next:focus { outline: 2px solid var(--orange); outline-offset: 2px; }
 
-        /* Navbar switch styles */
-        .nav-controls { display:flex; align-items:center; margin-left:12px; }
-        /* The switch - the box around the slider */
-        .switch {
-          font-size: 17px;
-          position: relative;
-          display: inline-block;
-          width: 3.5em;
-          height: 2em;
+        /* Navbar switch styles - fixed, follows scroll */
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 24px;
+            right: 48px;
+            z-index: 200;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-
-        /* Hide default HTML checkbox */
-        .switch input {
-          opacity: 0;
-          width: 0;
-          height: 0;
-          position: absolute;
+        body.night-mode .nav-controls {
+            background: rgba(31, 31, 31, 0.9);
         }
-
-        /* The slider */
-        .slider {
-          position: absolute;
-          cursor: pointer;
-          inset: 0;
-          background: rgb(113, 113, 113);
-          border-radius: 50px;
-          overflow: hidden;
-          transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+        @media (max-width: 768px) {
+            .nav-controls { top: 16px; right: 16px; }
         }
-
-        .slider:before {
-          position: absolute;
-          content: "";
-          height: 1.4em;
-          width: 1.4em;
-          right: 0.3em;
-          bottom: 0.3em;
-          transform: translateX(150%);
-          background-color: #464646;
-          border-radius: inherit;
-          transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
+        /* Theme toggle - sun / crescent moon icons */
+        .theme-toggle {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
         }
-
-        .slider:after {
-          position: absolute;
-          content: "";
-          height: 1.4em;
-          width: 1.4em;
-          left: 0.3em;
-          bottom: 0.3em;
-          background-color: #cccccc;
-          border-radius: inherit;
-          transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
-        }
-
-        .switch input:focus + .slider {
-          box-shadow: 0 0 1px #ffffff;
-        }
-
-        /* orange outline when checked, and stronger outline when focused+checked */
-        .switch input:checked + .slider {
-          box-shadow: 0 0 0 3px rgba(255,122,0,0.18);
-        }
-        .switch input:focus:checked + .slider {
-          box-shadow: 0 0 0 4px rgba(255,122,0,0.26);
-        }
-
-        .switch input:checked + .slider:before {
-          transform: translateY(0);
-        }
-
-        .switch input:checked + .slider::after {
-          transform: translateX(-150%);
-        }
-
-        /* Tooltip for the switch */
-        .switch-tooltip {
-            position: absolute;
-            top: -2.2em;
-            left: 50%;
-            transform: translateX(-50%) translateY(6px);
-            background: rgba(0,0,0,0.85);
-            color: #fff;
-            padding: 6px 8px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            white-space: nowrap;
+        .theme-toggle input {
             opacity: 0;
-            pointer-events: none;
-            transition: opacity 180ms ease, transform 180ms ease;
-            z-index: 100;
+            position: absolute;
+            width: 0;
+            height: 0;
         }
-        .switch:hover .switch-tooltip,
-        .switch input:focus + .slider + .switch-tooltip {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        .theme-icon {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
+        .theme-icon img {
+            width: 24px;
+            height: 24px;
+        }
+        .theme-icon.icon-sun img,
+        .theme-icon.icon-moon img { filter: none; }
+        body.night-mode .theme-icon.icon-sun img,
+        body.night-mode .theme-icon.icon-moon img { filter: invert(1) brightness(1.2); }
+        .theme-toggle .icon-sun { opacity: 1; }
+        .theme-toggle .icon-moon { opacity: 0; }
+        .theme-toggle input:checked + .icon-sun { opacity: 0; }
+        .theme-toggle input:checked ~ .icon-moon { opacity: 1; }
+        .theme-toggle:hover .theme-icon { transform: scale(1.1); }
 
         /* Night mode: toggle background and colors (keep orange accents unchanged) */
         body.night-mode { color: #eaeaea; }
@@ -656,7 +699,147 @@
         }
 
         body.night-mode::before {
-            background: linear-gradient(180deg, #4d00a5 0%, #2b3a4b 100%);
+            background: linear-gradient(180deg, #4d00a5 0%, #2d2b4b 100%);
+        }
+
+        /* Static (screenspace) table of contents */
+        .toc {
+            position: fixed;
+            top: 50%;
+            left: 24px;
+            transform: translateY(-50%);
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        .toc a {
+            color: #111;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            padding: 6px 10px;
+            padding-left: 13px;
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .toc a:hover {
+            background: rgba(255, 145, 20, 0.15);
+            color: var(--orange);
+        }
+        .toc a.active {
+            background: rgba(255, 145, 20, 0.25);
+            color: var(--orange);
+            border-left-color: var(--orange);
+        }
+        body.night-mode .toc {
+            background: rgba(31, 31, 31, 0.95);
+        }
+        body.night-mode .toc a { color: #eaeaea; }
+        body.night-mode .toc a:hover {
+            background: rgba(255, 145, 20, 0.2);
+            color: var(--orange);
+        }
+        body.night-mode .toc a.active {
+            background: rgba(255, 145, 20, 0.3);
+            color: var(--orange);
+        }
+        /* TOC collapsible when narrow (overlap risk) */
+        .toc-wrapper {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            z-index: 90;
+            display: flex;
+            align-items: center;
+        }
+        .toc-toggle {
+            display: none;
+            width: 36px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            outline: none;
+            border-radius: 0 12px 12px 0;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--orange);
+            flex-shrink: 0;
+            box-shadow: 4px 0 12px rgba(0, 0, 0, 0.08);
+            transition: opacity 0.2s ease;
+        }
+        .toc-toggle:focus {
+            outline: none;
+        }
+        body.night-mode .toc-toggle {
+            background: rgba(31, 31, 31, 0.95);
+        }
+        @media (max-width: 1700px) {
+            .toc { left: 12px; padding: 12px; font-size: 0.8rem; }
+            .toc-toggle { display: flex; }
+            .toc-wrapper .toc {
+                width: 0;
+                min-width: 0;
+                padding: 0;
+                overflow: hidden;
+                opacity: 0;
+                border: none;
+                box-shadow: none;
+                transition: opacity 0.2s ease, min-width 0.2s ease, padding 0.2s ease;
+            }
+            .toc-wrapper:hover .toc,
+            .toc-wrapper.toc-expanded .toc {
+                width: auto;
+                min-width: 160px;
+                padding: 12px;
+                overflow: visible;
+                opacity: 1;
+                border: none;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            }
+            .toc-wrapper:hover .toc-toggle,
+            .toc-wrapper.toc-expanded .toc-toggle {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+        @media (max-width: 768px) {
+            .toc-wrapper {
+                top: auto;
+                bottom: 16px;
+                left: 16px;
+                right: 16px;
+                transform: none;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .toc-wrapper .toc-toggle { display: none; }
+            .toc-wrapper .toc {
+                width: auto !important;
+                min-width: unset !important;
+                opacity: 1 !important;
+                overflow: visible !important;
+                padding: 12px !important;
+                border: 2px solid var(--orange) !important;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+            }
+            .toc {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 6px;
+            }
+            .toc a { white-space: normal; font-size: 0.75rem; padding: 6px 8px; }
         }
 
     </style>
@@ -668,22 +851,35 @@
             <!--<a href="index.html">HJEM</a>
             <a href="om-meg.html">OM MEG</a> -->
             <div class="nav-controls" aria-hidden="false">
-                <label class="switch" title="Nattmodus">
+                <label class="theme-toggle" title="Nattmodus / Dagslys">
                     <input type="checkbox" id="nightToggle" aria-label="Nattmodus">
-                    <span class="slider" aria-hidden="true"></span>
-                    <span class="switch-tooltip" aria-hidden="true">Nattmodus</span>
+                    <span class="theme-icon icon-sun"><img src="assets/images/sun-icon.svg" alt="Dag" width="24" height="24"></span>
+                    <span class="theme-icon icon-moon"><img src="assets/images/moon-icon.svg" alt="Natt" width="24" height="24"></span>
                 </label>
             </div>
         </nav>
     </header>
 
+    <div class="toc-wrapper">
+        <span class="toc-toggle" aria-label="Vis innholdsfortegnelse" role="button" tabindex="0">&#9654;</span>
+        <nav class="toc" aria-label="Innholdsfortegnelse">
+            <a href="#om-meg">Om Meg</a>
+            <a href="#salmon-solutions">Salmon Solutions UB</a>
+            <a href="#sunlit-sea">Sunlit Sea</a>
+            <a href="#purepipe">PurePipe</a>
+            <a href="#surewave">SureWave</a>
+            <a href="#trawltech">TrawlTech UB</a>
+            <a href="#SoMe">SoMe</a>
+        </nav>
+    </div>
+
     <main>
-        <div class="hero-section">
+        <div class="hero-section" id="om-meg">
             <!-- About section -->
             <div class="hero-about">
                 <section class="about-content">
             <div class="about-image">
-                <img src="assets/images/profile.jpg" alt="Revesporet">
+                <img src="assets/images/profile.jpg" alt="Revesporet" loading="lazy">
             </div>
             <div class="about-text">
                 <p>
@@ -716,10 +912,14 @@
             <section aria-label="Featured video">
             <div class="video-wrap">
                 <!-- autoplay requires muted in many browsers; playsinline helps mobile -->
-                <video id="featuredVideo" controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video-poster.jpg">
+                <video id="featuredVideo" autoplay loop muted playsinline preload="metadata" poster="assets/images/video-poster.jpg">
                     <source src="assets/videos/video/index.m3u8" type="application/x-mpegURL">
                     Your browser does not support the video tag.
                 </video>
+                <button type="button" class="video-mute-btn muted" aria-label="Lyd av/på">
+                    <span class="icon-muted"><img src="assets/images/mute-icon.svg" alt=""></span>
+                    <span class="icon-unmuted"><img src="assets/images/unmute-icon.svg" alt=""></span>
+                </button>
             </div>
 
             <!-- hotlinkable text / links under the video -->
@@ -727,35 +927,35 @@
         </div>
         </div>
 
-        <section aria-label="Image gallery">
+        <section id="salmon-solutions" aria-label="Image gallery">
             <h2 class="section-title">Oppdrag for Salmon Solutions UB</h2>
             <div class="image-gallery">
                 <div class="gallery-item">
-                    <img src="assets/images/s_1.webp" alt="Gallery image 1">
+                    <img src="assets/images/s_1.webp" alt="Gallery image 1" loading="lazy">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/s_2.webp" alt="Gallery image 2">
+                    <img src="assets/images/s_2.webp" alt="Gallery image 2" loading="lazy">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/s_3.webp" alt="Gallery image 3">
+                    <img src="assets/images/s_3.webp" alt="Gallery image 3" loading="lazy">
                 </div>
             </div>
         </section>       
         <!-- image gallery grid SUNLIT SEA -->
-        <section aria-label="Image gallery">
+        <section id="sunlit-sea" aria-label="Image gallery">
             <h2 class="section-title">Oppdrag for Sunlit Sea</h2>
             <div class="image-gallery">
                 <div class="gallery-item">
-                    <img src="assets/images/1.webp" alt="Gallery image 1">
+                    <img src="assets/images/1.webp" alt="Gallery image 1" loading="lazy">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/2.webp" alt="Gallery image 2">
+                    <img src="assets/images/2.webp" alt="Gallery image 2" loading="lazy">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/3.webp" alt="Gallery image 3">
+                    <img src="assets/images/3.webp" alt="Gallery image 3" loading="lazy">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/4.webp" alt="Gallery image 4">
+                    <img src="assets/images/4.webp" alt="Gallery image 4" loading="lazy">
                 </div>
             </div>
         </section>
@@ -763,31 +963,31 @@
         <section aria-label="Additional videos">
             <div class="video-grid">
                 <div class="video-box">
-                    <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video2-poster.jpg">
-                        <source src="assets/videos/Scene1/index.m3u8" type="application/x-mpegURL">
+                    <video class="lazy-video" controls autoplay loop muted playsinline preload="none" data-poster="assets/images/video2-poster.jpg">
+                        <source data-src="assets/videos/Scene1/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
                 <div class="video-box">
-                    <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
-                        <source src="assets/videos/Scene2/index.m3u8" type="application/x-mpegURL">
+                    <video class="lazy-video" controls autoplay loop muted playsinline preload="none" data-poster="assets/images/video3-poster.jpg">
+                        <source data-src="assets/videos/Scene2/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
             </div>
         </section>
                 <!-- image gallery grid ANNET -->
-        <section aria-label="Image gallery">
+        <section id="purepipe" aria-label="Image gallery">
             <h2 class="section-title">Oppdrag for PurePipe</h2>
             <div class="image-gallery">
                 <div class="gallery-item">
-                    <img src="assets/images/p_1.webp" alt="Gallery image 1">
+                    <img src="assets/images/p_1.webp" alt="Gallery image 1" loading="lazy">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/p_2.webp" alt="Gallery image 2">
+                    <img src="assets/images/p_2.webp" alt="Gallery image 2" loading="lazy">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/p_4.webp" alt="Gallery image 4">
+                    <img src="assets/images/p_4.webp" alt="Gallery image 4" loading="lazy">
                 </div>
             </div>
         </section>
@@ -795,40 +995,40 @@
         <section aria-label="Additional videos">
             <div class="video-grid">
                 <div class="video-box">
-                    <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video2-poster.jpg">
-                        <source src="assets/videos/P1/index.m3u8" type="application/x-mpegURL">
+                    <video class="lazy-video" controls autoplay loop muted playsinline preload="none" data-poster="assets/images/video2-poster.jpg">
+                        <source data-src="assets/videos/P1/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
                 <div class="video-box">
-                    <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
-                        <source src="assets/videos/P2/index.m3u8" type="application/x-mpegURL">
+                    <video class="lazy-video" controls autoplay loop muted playsinline preload="none" data-poster="assets/images/video3-poster.jpg">
+                        <source data-src="assets/videos/P2/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
                 <div class="video-box">
-                    <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
-                        <source src="assets/videos/P3/index.m3u8" type="application/x-mpegURL">
+                    <video class="lazy-video" controls autoplay loop muted playsinline preload="none" data-poster="assets/images/video3-poster.jpg">
+                        <source data-src="assets/videos/P3/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
             </div>
         </section>
 
-        <section aria-label="Image gallery">
+        <section id="surewave" aria-label="Image gallery">
             <h2 class="section-title">Oppdrag for SureWave</h2>
             <div class="image-gallery">
                 <div class="gallery-item">
-                    <img src="assets/images/sure_1.webp" alt="Gallery image 1">
+                    <img src="assets/images/sure_1.webp" alt="Gallery image 1" loading="lazy">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/sure_2.webp" alt="Gallery image 2">
+                    <img src="assets/images/sure_2.webp" alt="Gallery image 2" loading="lazy">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/sure_3.webp" alt="Gallery image 2">
+                    <img src="assets/images/sure_3.webp" alt="Gallery image 2" loading="lazy">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/sure_4.webp" alt="Gallery image 4">
+                    <img src="assets/images/sure_4.webp" alt="Gallery image 4" loading="lazy">
                 </div>
             </div>
         </section>
@@ -836,37 +1036,103 @@
          <section aria-label="Additional videos">
             <div class="video-grid">
                 <div class="video-box">
-                    <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video2-poster.jpg">
-                        <source src="assets/videos/W1/index.m3u8" type="application/x-mpegURL">
+                    <video class="lazy-video" controls autoplay loop muted playsinline preload="none" data-poster="assets/images/video2-poster.jpg">
+                        <source data-src="assets/videos/W1/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
                 <div class="video-box">
-                    <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
-                        <source src="assets/videos/W2/index.m3u8" type="application/x-mpegURL">
+                    <video class="lazy-video" controls autoplay loop muted playsinline preload="none" data-poster="assets/images/video3-poster.jpg">
+                        <source data-src="assets/videos/W2/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
                 <div class="video-box">
-                    <video controls autoplay loop muted playsinline preload="metadata" poster="assets/images/video3-poster.jpg">
-                        <source src="assets/videos/W3/index.m3u8" type="application/x-mpegURL">
+                    <video class="lazy-video" controls autoplay loop muted playsinline preload="none" data-poster="assets/images/video3-poster.jpg">
+                        <source data-src="assets/videos/W3/index.m3u8" type="application/x-mpegURL">
                         Your browser does not support the video tag.
                     </video>
                 </div>
             </div>
         </section>
 
-         <section aria-label="Image gallery">
+         <section id="trawltech" aria-label="Image gallery">
             <h2 class="section-title">Oppdrag for TrawlTech UB</h2>
             <div class="image-gallery">
                 <div class="gallery-item">
-                    <img src="assets/images/trawl_1.webp" alt="Gallery image 1">
+                    <img src="assets/images/trawl_1.webp" alt="Gallery image 1" loading="lazy">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/trawl_3.webp" alt="Gallery image 2">
+                    <img src="assets/images/trawl_3.webp" alt="Gallery image 2" loading="lazy">
                 </div>
                 <div class="gallery-item">
-                    <img src="assets/images/trawl_4.webp" alt="Gallery image 4">
+                    <img src="assets/images/trawl_4.webp" alt="Gallery image 4" loading="lazy">
+                </div>
+            </div>
+        </section>
+
+        <section id="SoMe" aria-label="Image gallery">
+            <h2 class="section-title">Innhold for SoMe</h2>
+            <div class="video-grid">
+                <div class="video-box">
+                    <video class="lazy-video" autoplay loop muted playsinline preload="none">
+                        <source data-src="assets/videos/reels/reel%201.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <button type="button" class="video-mute-btn muted" aria-label="Lyd av/på">
+                        <span class="icon-muted"><img src="assets/images/mute-icon.svg" alt=""></span>
+                        <span class="icon-unmuted"><img src="assets/images/unmute-icon.svg" alt=""></span>
+                    </button>
+                </div>
+                <div class="video-box">
+                    <video class="lazy-video" autoplay loop muted playsinline preload="none">
+                        <source data-src="assets/videos/reels/reel%202.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <button type="button" class="video-mute-btn muted" aria-label="Lyd av/på">
+                        <span class="icon-muted"><img src="assets/images/mute-icon.svg" alt=""></span>
+                        <span class="icon-unmuted"><img src="assets/images/unmute-icon.svg" alt=""></span>
+                    </button>
+                </div>
+                <div class="video-box">
+                    <video class="lazy-video" autoplay loop muted playsinline preload="none">
+                        <source data-src="assets/videos/reels/reel%203.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <button type="button" class="video-mute-btn muted" aria-label="Lyd av/på">
+                        <span class="icon-muted"><img src="assets/images/mute-icon.svg" alt=""></span>
+                        <span class="icon-unmuted"><img src="assets/images/unmute-icon.svg" alt=""></span>
+                    </button>
+                </div>
+                <div class="video-box">
+                    <video class="lazy-video" autoplay loop muted playsinline preload="none">
+                        <source data-src="assets/videos/reels/reel%204.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <button type="button" class="video-mute-btn muted" aria-label="Lyd av/på">
+                        <span class="icon-muted"><img src="assets/images/mute-icon.svg" alt=""></span>
+                        <span class="icon-unmuted"><img src="assets/images/unmute-icon.svg" alt=""></span>
+                    </button>
+                </div>
+                <div class="video-box">
+                    <video class="lazy-video" autoplay loop muted playsinline preload="none">
+                        <source data-src="assets/videos/reels/reel%205.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <button type="button" class="video-mute-btn muted" aria-label="Lyd av/på">
+                        <span class="icon-muted"><img src="assets/images/mute-icon.svg" alt=""></span>
+                        <span class="icon-unmuted"><img src="assets/images/unmute-icon.svg" alt=""></span>
+                    </button>
+                </div>
+                <div class="video-box">
+                    <video class="lazy-video" autoplay loop muted playsinline preload="none">
+                        <source data-src="assets/videos/reels/reel%206.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <button type="button" class="video-mute-btn muted" aria-label="Lyd av/på">
+                        <span class="icon-muted"><img src="assets/images/mute-icon.svg" alt=""></span>
+                        <span class="icon-unmuted"><img src="assets/images/unmute-icon.svg" alt=""></span>
+                    </button>
                 </div>
             </div>
         </section>
@@ -885,32 +1151,126 @@
     </div>
 
     <script>
-        // Initialize HLS for all video elements
-        function initializeHLS() {
-            const videos = document.querySelectorAll('video');
-            videos.forEach(video => {
-                const source = video.querySelector('source[type="application/x-mpegURL"]');
-                if (!source) return;
+        // Initialize HLS for a single video (when it has src set)
+        function initHLSForVideo(video) {
+            const source = video.querySelector('source[type="application/x-mpegURL"]');
+            if (!source || !source.src) return;
+            if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = source.src;
+            } else if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(source.src);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(() => {}); });
+            }
+        }
 
-                // Check if native HLS support exists (Safari)
-                if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = source.src;
-                } else if (Hls.isSupported()) {
-                    // Use HLS.js for other browsers
-                    const hls = new Hls();
-                    hls.loadSource(source.src);
-                    hls.attachMedia(video);
-                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                        video.play().catch(() => {});
-                    });
-                } else {
-                    console.warn('HLS not supported on this browser');
-                }
+        // Initialize HLS for all videos that have src (non-lazy)
+        function initializeHLS() {
+            document.querySelectorAll('video source[type="application/x-mpegURL"][src]').forEach(source => {
+                initHLSForVideo(source.closest('video'));
             });
         }
 
-        // Initialize when DOM is ready
-        document.addEventListener('DOMContentLoaded', initializeHLS);
+        // Lazy load videos when they enter viewport
+        function initLazyVideos() {
+            const lazyVideos = document.querySelectorAll('.lazy-video');
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    const video = entry.target;
+                    const source = video.querySelector('source[data-src]');
+                    if (!source || source.src) return;
+                    source.src = source.dataset.src || source.getAttribute('data-src');
+                    if (video.dataset.poster) video.poster = video.dataset.poster;
+                    video.load();
+                    io.unobserve(video);
+                    initHLSForVideo(video);
+                });
+            }, { rootMargin: '100px' });
+            lazyVideos.forEach(v => io.observe(v));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeHLS();
+            initLazyVideos();
+        });
+
+        // Featured video and SoMe videos: click to toggle mute
+        document.addEventListener('DOMContentLoaded', () => {
+            const muteTargets = document.querySelectorAll('.video-wrap, #SoMe .video-box');
+            muteTargets.forEach(box => {
+                const video = box.querySelector('video');
+                const btn = box.querySelector('.video-mute-btn');
+                if (!video || !btn) return;
+                function toggleMute() {
+                    video.muted = !video.muted;
+                    btn.classList.toggle('muted', video.muted);
+                    btn.setAttribute('aria-label', video.muted ? 'Slå på lyd' : 'Slå av lyd');
+                }
+                const isWrap = box.classList.contains('video-wrap');
+                (isWrap ? btn : box).addEventListener('click', (e) => {
+                    if (isWrap) e.stopPropagation();
+                    e.preventDefault();
+                    toggleMute();
+                });
+            });
+        });
+
+        // TOC scroll spy: highlight current section
+        document.addEventListener('DOMContentLoaded', () => {
+            const tocLinks = document.querySelectorAll('.toc a[href^="#"]');
+            const sections = Array.from(tocLinks).map(a => {
+                const id = a.getAttribute('href').slice(1);
+                return document.getElementById(id);
+            }).filter(Boolean);
+
+            function setActive() {
+                const scrollY = window.scrollY;
+                const viewportMid = scrollY + window.innerHeight * 0.4;
+                const atBottom = scrollY + window.innerHeight >= document.documentElement.scrollHeight - 80;
+                let activeIdx = atBottom && sections.length > 0 ? sections.length - 1 : 0;
+                if (!atBottom) {
+                    for (let i = 0; i < sections.length; i++) {
+                        const top = sections[i].getBoundingClientRect().top + scrollY;
+                        if (top <= viewportMid) activeIdx = i;
+                    }
+                }
+                tocLinks.forEach((link, i) => link.classList.toggle('active', i === activeIdx));
+            }
+
+            setActive();
+            window.addEventListener('scroll', () => requestAnimationFrame(setActive));
+            window.addEventListener('hashchange', () => requestAnimationFrame(setActive));
+
+            // Update active state after smooth scroll from TOC click
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const id = link.getAttribute('href').slice(1);
+                    const el = document.getElementById(id);
+                    if (el) {
+                        e.preventDefault();
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        tocLinks.forEach(l => l.classList.remove('active'));
+                        link.classList.add('active');
+                        const interval = setInterval(setActive, 80);
+                        setTimeout(() => clearInterval(interval), 1000);
+                    }
+                });
+            });
+
+            // Toggle TOC on arrow click (touch / no-hover)
+            const tocWrapper = document.querySelector('.toc-wrapper');
+            const tocToggle = document.querySelector('.toc-toggle');
+            if (tocToggle && tocWrapper) {
+                const toggle = () => tocWrapper.classList.toggle('toc-expanded');
+                tocToggle.addEventListener('click', toggle);
+                tocToggle.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+                document.addEventListener('click', (e) => {
+                    if (!tocWrapper.contains(e.target) && tocWrapper.classList.contains('toc-expanded')) tocWrapper.classList.remove('toc-expanded');
+                });
+            }
+        });
         
         // Original script follows
         document.addEventListener('DOMContentLoaded', () => {
