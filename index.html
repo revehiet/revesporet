@@ -12,7 +12,7 @@
     <meta property="og:image" content="assets/images/profile.jpg">
     <meta property="og:type" content="website">
     <link rel="icon" type="image/png" href="assets/images/favicon.png" />
-    <link href='https://fonts.googleapis.com/css?family=Poppins:700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Poppins:350' rel='stylesheet' type='text/css'>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js"></script>
     <style>
@@ -695,11 +695,19 @@
             height: 100vh;
             z-index: -1;
             pointer-events: none;
-            background: linear-gradient(180deg, #e5d9f0 0%, #d9f0f5 100%);
+            background-size: 46px 46px;
+            background-image:  radial-gradient(#afafaf 1.1500000000000001px, transparent 1.1500000000000001px), radial-gradient(#8f8f8f 1.1500000000000001px, #f0f0f0 1.1500000000000001px);
         }
 
         body.night-mode::before {
-            background: linear-gradient(180deg, #4d00a5 0%, #2d2b4b 100%);
+            content: '';
+            position: fixed;
+            inset: 0 0 auto 0;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            background-size: 46px 46px;
+            background-image:  radial-gradient(#838383 1.1500000000000001px, transparent 1.1500000000000001px), radial-gradient(#838383 1.1500000000000001px, #1a1a1a 1.1500000000000001px);
         }
 
         /* Static (screenspace) table of contents */
@@ -882,22 +890,26 @@
                 <img src="assets/images/profile.jpg" alt="Revesporet" loading="lazy">
             </div>
             <div class="about-text">
-                <p>
-                
-                </p>
-                <h2>Om Meg</h2>
-                <p>
-                    Hei! Jeg heter Leif Viljar! Jeg er en kreativ kunstner og videograf dedikert til å skape visuelle opplevelser som inspirerer og engasjerer.
-                </p>
-                <p>
-                    Med bakgrunn innen digital kunst og filmografi, arbeider jeg med å kombinere teknologi og kreativitet for å produsere innhold som er både visuelt slagkraftig og meningsfylt.
-                </p>
-                <p>
-                    Mitt arbeid spenner fra filming & redigering til 3D verdenen, og jeg er alltid på jakt etter nye måter å utforske grensene for visuell storytelling.
-                </p>
-                <p>
-                    Utforsk galleriet mitt for å se mer av mitt arbeid, eller ta kontakt via linkene nedenfor.
-                </p>
+
+                <p>Jeg heter <strong>Leif Viljar</strong> og driver med å lage animerte informercial-filmer for tech- og marinebedrifter.</p>
+
+                <p>Jeg lager visuelle animasjoner som forenkler komplekse systemer, prosesser og produkter – uten å miste faglig tyngde.</p>
+
+                <p><strong>Hvorfor jobbe med meg:</strong></p>
+
+                <ul>
+                <li>🎥 Forklarer teknologi klart på 30–90 sekunder</li>
+                <li>⚙️ Spesialisert på tech, marine og industrielle løsninger</li>
+                <li>🌊 Forstår både det tekniske og det visuelle språket</li>
+                <li>🚀 Brukes i salg, messer, nettsider og investor-presentasjoner</li>
+                </ul>
+
+                <p>Resultatet er filmer som skaper forståelse raskere, øker interesse og gjør teknologien deres lettere å selge.</p>
+
+                <p><strong>Dere bygger løsninger – jeg gjør dem synlige.</strong></p>
+
+                <p>Tar gjerne en uformell prat på 10 minutter for å se om animasjon kan være nyttig for dere – helt uforpliktende.</p>
+
                 <div class="contact-links">
                     <a href="mailto:revehaney@gmail.com">Send meg en mail!</a>
                     <a href="https://www.instagram.com/revesporet/" target="_blank" rel="noopener noreferrer">Instagram</a>
