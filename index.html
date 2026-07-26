@@ -15,6 +15,22 @@
     <link href='https://fonts.googleapis.com/css?family=Poppins:350' rel='stylesheet' type='text/css'>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.3/dist/lazyload.min.js"></script>
+    <script>
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('view') === 'desktop') return;
+
+            var isPhone = /Android/i.test(navigator.userAgent) || /iPhone|iPod/i.test(navigator.userAgent) ||
+                (navigator.userAgentData && navigator.userAgentData.mobile && /Android|iPhone|iPod/i.test(navigator.userAgentData.ua));
+
+            if (isPhone) {
+                document.documentElement.classList.add('mobile-device');
+                document.addEventListener('DOMContentLoaded', function () {
+                    document.body.classList.add('mobile-device');
+                });
+            }
+        })();
+    </script>
     <style>
 
         @font-face 
@@ -280,6 +296,45 @@
             border-radius:14px;
             overflow:hidden;
             box-shadow: 0 8px 24px rgba(17,17,17,0.08);
+        }
+
+        html.mobile-device .toc-wrapper,
+        html.mobile-device .toc {
+            display: none !important;
+        }
+
+        html.mobile-device .gallery-item {
+            aspect-ratio: 4 / 5;
+            border-radius: 14px;
+        }
+
+        html.mobile-device .gallery-item img {
+            object-fit: contain;
+            padding: 8px;
+            background: #fff;
+        }
+
+        html.mobile-device .video-wrap,
+        html.mobile-device .video-box {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        html.mobile-device .video-wrap video,
+        html.mobile-device .video-box video {
+            object-fit: contain;
+            background: #000;
+        }
+
+        html.mobile-device .video-grid {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        html.mobile-device #SoMe .video-box {
+            max-width: 100%;
+            width: min(100%, 360px);
+            margin: 0 auto;
         }
 
         video
@@ -850,33 +905,11 @@
             }
         }
         @media (max-width: 768px) {
-            .toc-wrapper {
-                top: auto;
-                bottom: 16px;
-                left: 16px;
-                right: 16px;
-                transform: none;
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
+            .toc-wrapper,
+            .toc-wrapper .toc,
+            .toc-wrapper .toc-toggle {
+                display: none !important;
             }
-            .toc-wrapper .toc-toggle { display: none; }
-            .toc-wrapper .toc {
-                width: auto !important;
-                min-width: unset !important;
-                opacity: 1 !important;
-                overflow: visible !important;
-                padding: 12px !important;
-                border: 2px solid var(--orange) !important;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-            }
-            .toc {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 6px;
-            }
-            .toc a { white-space: normal; font-size: 0.75rem; padding: 6px 8px; }
         }
 
     </style>
@@ -1313,7 +1346,7 @@
             // Toggle TOC on arrow click (touch / no-hover)
             const tocWrapper = document.querySelector('.toc-wrapper');
             const tocToggle = document.querySelector('.toc-toggle');
-            if (tocToggle && tocWrapper) {
+            if (tocToggle && tocWrapper && window.innerWidth > 768) {
                 const toggle = () => tocWrapper.classList.toggle('toc-expanded');
                 tocToggle.addEventListener('click', toggle);
                 tocToggle.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
