@@ -85,6 +85,7 @@ let mediaGeneration = 0;
 const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
 const hoverPreference = matchMedia('(hover: hover) and (pointer: fine)');
 const previews = [];
+let previewSyncPending = false;
 
 function createIcon(name) {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -103,11 +104,12 @@ function createIcon(name) {
   return svg;
 }
 
-// One lifecycle for inline previews: HLS on demand, muted playback, fade after
-// the first frame, and suspended loading while offscreen or behind the dialog.
+// Warm at most two nearby previews before entry; playback still requires
+// visibility/hover. Keep covers in place until a video frame is ready.
 function createPreview(video, item, host, button, mode) {
   let stream = null;
   let visible = false;
+  let nearby = false;
   let hovered = false;
   let focused = false;
   let userIntent = null;
@@ -117,6 +119,8 @@ function createPreview(video, item, host, button, mode) {
   let generation = 0;
   let idleTimer = null;
   let pendingPlay = false;
+  let primed = false;
+  let manifestReady = false;
   video.muted = video.defaultMuted = true;
   video.loop = true;
   video.playsInline = true;
@@ -124,7 +128,8 @@ function createPreview(video, item, host, button, mode) {
   video.setAttribute('muted', '');
   video.setAttribute('playsinline', '');
   video.setAttribute('webkit-playsinline', '');
-  video.autoplay = mode !== 'hover';
+  // Setting a source during preloading must never start offscreen playback.
+  video.autoplay = false;
 
   function syncButton() {
     button.setAttribute('aria-label', `${video.paused ? 'Spill' : 'Sett på pause'}: ${item.title}`);
@@ -140,12 +145,19 @@ function createPreview(video, item, host, button, mode) {
     syncButton();
   });
   video.addEventListener('pause', syncButton);
+  video.addEventListener('loadeddata', () => {
+    // hls.js waits for the complete fragment; native HLS exposes only media events.
+    if (!stream) primed = true;
+    syncPreviews();
+  });
 
   function release() {
     generation++;
     if (stream) { stream.destroy(); stream = null; }
     started = false;
     usingFallback = false;
+    primed = false;
+    manifestReady = false;
     video.removeAttribute('src');
     video.load();
   }
@@ -155,7 +167,7 @@ function createPreview(video, item, host, button, mode) {
     if (stream) { stream.destroy(); stream = null; }
     video.src = item.fallback;
     video.load();
-    sync();
+    syncPreviews();
   }
   video.addEventListener('error', fallback);
   function start() {
@@ -164,9 +176,24 @@ function createPreview(video, item, host, button, mode) {
     if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = item.src;
     } else if (window.Hls && Hls.isSupported()) {
-      stream = new Hls({ maxBufferLength: 8, maxMaxBufferLength: 12, capLevelToPlayerSize: true });
+      stream = new Hls({ autoStartLoad: false, maxBufferLength: 8, maxMaxBufferLength: 12, capLevelToPlayerSize: true });
       let recovered = false;
-      stream.on(Hls.Events.MANIFEST_PARSED, () => { if (token === generation) sync(); });
+      stream.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (token !== generation) return;
+        manifestReady = true;
+        syncPreviews();
+      });
+      stream.on(Hls.Events.FRAG_LOADING, (_, data) => {
+        if (token !== generation || wanted || data.frag.type !== 'main' || typeof data.frag.sn !== 'number') return;
+        // Finish this segment without starting the next one during transmuxing.
+        stream.pauseBuffering();
+      });
+      stream.on(Hls.Events.FRAG_BUFFERED, (_, data) => {
+        if (token !== generation || data.frag.type !== 'main') return;
+        primed = true;
+        if (!wanted) stream.stopLoad();
+        syncPreviews();
+      });
       stream.on(Hls.Events.ERROR, (_, data) => {
         if (!data.fatal || token !== generation) return;
         if (data.type === Hls.ErrorTypes.MEDIA_ERROR && !recovered) {
@@ -178,15 +205,33 @@ function createPreview(video, item, host, button, mode) {
       stream.attachMedia(video);
     } else fallback();
   }
-  function sync() {
+  function wantsPlayback() {
     const automatic = mode !== 'hover' || hovered || focused;
-    wanted = visible && !document.hidden && !dialog.open && userIntent !== false &&
+    return visible && !document.hidden && !dialog.open && userIntent !== false &&
       (userIntent === true || (automatic && !motionPreference.matches));
-    if (wanted) {
+  }
+  function distanceFromViewport() {
+    const bounds = video.getBoundingClientRect();
+    return Math.max(0, bounds.top - innerHeight, -bounds.bottom);
+  }
+  function sync(warm = false) {
+    wanted = wantsPlayback();
+    const load = wanted || warm;
+    video.preload = wanted ? 'auto' : warm && !primed ? 'metadata' : 'none';
+    if (load) {
       clearTimeout(idleTimer);
       idleTimer = null;
       if (!started) start();
-      if (stream) stream.startLoad(video.currentTime);
+      if (stream && manifestReady) {
+        if (wanted) stream.resumeBuffering();
+        if ((wanted || !primed) && !stream.loadingEnabled) {
+          stream.resumeBuffering();
+          stream.startLoad(video.currentTime);
+        }
+        else if (!wanted && primed) stream.stopLoad();
+      }
+    }
+    if (wanted) {
       video.muted = true;
       if (video.paused && !pendingPlay) {
         pendingPlay = true;
@@ -199,9 +244,11 @@ function createPreview(video, item, host, button, mode) {
       }
     } else {
       video.pause();
-      if (stream) stream.stopLoad();
+      if (stream && (!warm || primed)) stream.stopLoad();
       if (userIntent !== false || !visible || dialog.open) host.classList.remove('preview-playing');
-      if (mode !== 'hero' && started && !idleTimer) idleTimer = setTimeout(() => {
+      // Abort unfinished speculative work when another preview takes priority.
+      if (!warm && started && !primed) release();
+      if (mode !== 'hero' && started && !warm && !idleTimer) idleTimer = setTimeout(() => {
         idleTimer = null;
         if (!wanted) release();
       }, 8000);
@@ -210,29 +257,55 @@ function createPreview(video, item, host, button, mode) {
   }
   button.addEventListener('click', () => {
     userIntent = video.paused;
-    sync();
+    syncPreviews();
   });
   if (mode === 'hover') {
     host.addEventListener('pointerenter', event => {
-      if (event.pointerType === 'mouse' && hoverPreference.matches) { hovered = true; sync(); }
+      if (event.pointerType === 'mouse' && hoverPreference.matches) { hovered = true; syncPreviews(); }
     });
     host.addEventListener('pointerleave', event => {
-      if (event.pointerType === 'mouse') { hovered = false; userIntent = null; sync(); }
+      if (event.pointerType === 'mouse') { hovered = false; userIntent = null; syncPreviews(); }
     });
-    host.addEventListener('focusin', event => { focused = event.target.matches(':focus-visible'); sync(); });
+    host.addEventListener('focusin', event => { focused = event.target.matches(':focus-visible'); syncPreviews(); });
     host.addEventListener('focusout', event => {
-      if (!host.contains(event.relatedTarget)) { focused = false; sync(); }
+      if (!host.contains(event.relatedTarget)) { focused = false; syncPreviews(); }
     });
   }
   new IntersectionObserver(entries => {
     visible = entries[0].isIntersecting && entries[0].intersectionRatio >= .1;
-    sync();
+    syncPreviews();
   }, { threshold: [0, .1] }).observe(video);
-  previews.push(sync);
+  new IntersectionObserver(entries => {
+    nearby = entries[0].isIntersecting;
+    syncPreviews();
+  }, { rootMargin: '800px 0px', threshold: 0 }).observe(video);
+  previews.push({
+    video, sync, wantsPlayback, distanceFromViewport,
+    canWarm: () => nearby && userIntent !== false && distanceFromViewport() <= 800 && !wantsPlayback(),
+  });
   syncButton();
 }
 
-function syncPreviews() { previews.forEach(sync => sync()); }
+function syncPreviews() {
+  // Animation frames are suspended in background tabs; stop playback immediately.
+  if (document.hidden) {
+    previews.forEach(preview => preview.sync());
+    return;
+  }
+  if (previewSyncPending) return;
+  previewSyncPending = true;
+  // Batch all intersection updates before choosing the nearest previews.
+  requestAnimationFrame(() => {
+    previewSyncPending = false;
+    // Give a newly visible/hovered video's first frame priority over preloading.
+    const waitingForPlayback = previews.some(preview => preview.wantsPlayback() && preview.video.readyState < 2);
+    const allowAdvance = !waitingForPlayback && !document.hidden && !dialog.open &&
+      !motionPreference.matches && !navigator.connection?.saveData;
+    const warm = new Set(allowAdvance ? previews.filter(preview => preview.canWarm())
+      .sort((a, b) => a.distanceFromViewport() - b.distanceFromViewport()).slice(0, 2) : []);
+    previews.forEach(preview => preview.sync(warm.has(preview)));
+  });
+}
 function addInlineVideo(item, host, label) {
   const video = document.createElement('video');
   video.className = 'inline-preview';

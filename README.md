@@ -33,8 +33,14 @@ until the first video frame is ready, then fading into playback. Touch users can
 use the preview button. Social reels autoplay silently while visible in their
 original 9:16 frame; clicking opens the full player with sound and controls.
 
-Inline previews pause and suspend buffering out of view or while the media
-dialog is open. Inactive card players release their buffers after eight seconds.
+Inline previews prepare up to 800px before entering view. At most two nearby
+non-playing previews preload at a time; a video's first-frame playback takes
+priority over speculative loading. hls.js stops advance loading after one main
+segment, while native HLS uses browser-controlled metadata preloading. Videos
+still play only when visible (and hovered for 3D cards). Advance loading is
+disabled for reduced-motion and Save-Data visitors or while the dialog is open.
+Offscreen previews pause; players outside the preload selection release their
+buffers after eight seconds.
 Reduced-motion visitors can start previews explicitly. Browsers with native
 HLS use it directly; other supported browsers use the locally bundled
 [hls.js](https://github.com/video-dev/hls.js/tree/v1.7.2). Original WebM/MP4 files
